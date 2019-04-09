@@ -23,7 +23,7 @@ search: true
 
 ## Installation
 
-Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip). Windows and Linux installers are coming soon. 
+Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/). Windows and Linux installers are coming soon. 
 
 *Try out KeyChain on the [demo page](https://arrayio.github.io/array-io-keychain/demo/).*
 
@@ -40,7 +40,7 @@ Below you can find comprehensive installation guides for [macOS](#macos), [Windo
 
 ## Getting started
 
-After you have installed KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip), you can start using it with web3. Just install the `web3override` library from this [source](https://www.npmjs.com/package/web3override) and follow these simple steps (see the right panel in javascript).
+After you have installed KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/), you can start using it with web3. Just install the `web3override` library from this [source](https://www.npmjs.com/package/web3override) and follow these simple steps (see the right panel in javascript).
 
 If you launch KeyChain for the first time, you need to get a public key with the "select_key" command. 
 You can save the public key to local storage. Then you will not need to use "select_key" command again. 
@@ -50,8 +50,7 @@ NB: Do not forget to install the library and require it:
 1) Install the library
 `npm install keychain.js`
 
-2) Require it
-`const Module = require('web3override');`
+2) Use an overridden web3 function
 
 Now you can turn to the right panel where you use an overridden web3 function.
  
@@ -60,23 +59,27 @@ Now you can turn to the right panel where you use an overridden web3 function.
 ```
 
 ```javascript
-const keyInstance = await Module.Keychain.create();
-const data = await keyInstance.selectKey();
-const key = data.result;
-await keyInstance.term();
-web3.eth.accounts.signTransaction = Module.web3Override(web3).signTransaction;
-
-// now we use web3 with keychain
-await web3.eth.accounts.signTransaction(transactionParams, key);
+const { Keychain, KeychainWeb3 } = require('keychain.js');
+const Web3 = require('web3');
+const web3 = new Web3('YOUR_API_URL'); // https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf
+const tx = {
+  to: '0xE8899BA12578d60e4D0683a596EDaCbC85eC18CC',
+  value: 100,
+  gas: 21000
+};
+const keychain = new Keychain();
+const keychainWeb3 = new KeychainWeb3(keychain, web3);
+keychain.selectKey()
+  .then(publicKey => keychainWeb3.signTransaction(tx, publicKey))
+  .then(result => web3.eth.sendSignedTransaction(result.rawTransaction));
 ```
 
-* `keychain.js` - Keychain class with ws connection initialization
-* `index.js` - override `web3.eth.accounts.signTransaction` method 
-* `test.js` - example usage together (`keychain` + `web3`) 
+* `keychain.js` - Keychain class for working with the KeyChain WebSocket
+* `keychainWeb3.js` - KeychainWeb3 class with methods `sign` and `singTransaction` for substituting `web3.eth.accounts.sign` and `web3.eth.accounts.signTransaction` methods
 
 **Run tests**
 
-If you wish to see KeyChain in action, install KeyChain, then install the library from this [source](https://www.npmjs.com/package/web3override) and import key to the `key_data` folder.
+If you wish to see KeyChain in action, install KeyChain, then install the library from this [source](https://www.npmjs.com/package/keychain.js) and import key to the `key_data` folder.
 
 
 1) Add key to your `key_data`:
@@ -88,7 +91,7 @@ If you wish to see KeyChain in action, install KeyChain, then install the librar
 
 <button class="show btn btn-info btn-sm" data-image='30'>show</button>
 
-<img id='30' alt="keychain2" src="https://user-images.githubusercontent.com/34011337/52135027-f79f5200-2655-11e9-9718-6d47355fc0fb.gif">
+<img id='30' alt="keychain2" src="https://user-images.githubusercontent.com/2520008/55244335-1125da00-5252-11e9-971e-c7edfb208c4c.gif">
 
 
 ## Contact
@@ -428,7 +431,7 @@ result|`string`|current version number which has the form of "[major].[minor].[b
 
 ### How to install 
 
-Download [KeyChain](https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip) and follow the steps of the graphic installer. 
+Download [KeyChain](https://github.com/arrayio/array-io-keychain/releases/) and follow the steps of the graphic installer. 
 
 <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
 
@@ -520,7 +523,7 @@ On this [demo page](https://arrayio.github.io/array-io-keychain/eth_signer/) you
 
 ### 1. Install KeyChain for macOS
 
-Download KeyChain installer for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip).
+Download KeyChain installer for [macOS](https://github.com/arrayio/array-io-keychain/releases/).
 
 ### 2. Request public key
 
@@ -578,7 +581,7 @@ web3.eth.getBalance(fromAdd)
 
 You can now use the key that you have generated to sign a transaction.
 
-You can find an example of the code [here](https://gist.github.com/cypherpunk99/3e1314f8cc62cd675fa5c8f7bbe97923).
+You can find an example of the code [here](https://github.com/arrayio/keychain.js/blob/master/example/signETH.js).
 
 ###  7. Check Etherscan
 
@@ -595,7 +598,7 @@ You can find an example of the code [here](https://gist.github.com/cypherpunk99/
 - JavaScript/HTML
 - etc
 
-Install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip).
+Install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/).
 
 ## Demo pages in JavaScript
 
@@ -609,7 +612,7 @@ Install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releas
 
 - [Here](https://arrayio.github.io/array-io-keychain/eth_signer/) you can try out signing Ethereum transactions with KeyChain.
 
-- You can find an example of the code [here](https://gist.github.com/cypherpunk99/3e1314f8cc62cd675fa5c8f7bbe97923).
+- You can find an example of the code [here](https://github.com/arrayio/keychain.js/blob/master/example/signETH.js).
 
 ## Message format
 
@@ -679,7 +682,7 @@ In case of an error, the resulting answer will carry an error attribute and a de
 
 ### JavaScript integration example
 
-Before you proceed with the integration, you need to install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip).
+Before you proceed with the integration, you need to install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/).
 
 #### Test in the web
 
@@ -742,7 +745,7 @@ For full comprehensive descriptions of the commands, acceptable parameters and v
 
 ## Pipe integration guide
 
-Before you proceed with the integration, you need to install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip).
+Before you proceed with the integration, you need to install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/).
 
 When the installation is complete, you can open stream input to start sending json requests through STDIN - STDOUT pipes.
 
